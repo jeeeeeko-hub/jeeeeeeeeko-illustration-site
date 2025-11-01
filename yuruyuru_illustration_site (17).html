@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ジェーコのゆるゆるイラスト</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{ --pink:#ff8fa3; --pink-soft:#ffd6e0; --mint:#57c4a2; }
+
+    body {
+      font-family: 'Kiwi Maru', sans-serif;
+      margin: 0;
+      color: #444;
+      background: linear-gradient(to bottom, #fff0f5, #ffe4ec);
+      background-image: radial-gradient(circle, rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(to bottom, #fff0f5, #ffe4ec);
+      background-size: 20px 20px, auto;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.8);
+      -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+      position: fixed; top: 0; width: 100%;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10;
+    }
+
+    header h1 { font-size: 1.2rem; color: var(--pink); }
+    nav a { margin: 0 8px; text-decoration: none; color: #666; font-size: 0.9rem; }
+
+    .hero {
+      position: relative; margin-top: 80px; text-align: center; padding: 80px 20px;
+      background: rgba(255, 255, 255, 0.7); border-radius: 16px; max-width: 900px; margin-left: auto; margin-right: auto; overflow: hidden;
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 20% 30%, rgba(255,192,203,0.2) 10px, transparent 40px),
+                        radial-gradient(circle at 80% 70%, rgba(255,182,193,0.15) 8px, transparent 40px),
+                        radial-gradient(circle at 40% 80%, rgba(255,182,193,0.1) 12px, transparent 50px);
+      background-repeat: no-repeat; animation: floatPattern 10s ease-in-out infinite alternate; z-index: 0;
+    }
+    @keyframes floatPattern { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+    .hero h2, .hero p { position: relative; z-index: 1; animation: fadeInUp 2s ease both; }
+    @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+    .hero h2 { font-size: 1.8rem; color: #ff6b9b; margin-bottom: 10px; }
+    .hero p { color: #777; }
+
+    .gallery {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 40px 20px;
+      background: linear-gradient(to bottom right, #fffafc, #fff6fa); border-radius: 16px; max-width: 1000px; margin: 40px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 2px dotted rgba(255, 182, 193, 0.4); animation: gentleFloat 6s ease-in-out infinite alternate;
+    }
+    @keyframes gentleFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+
+    .card {
+      background: #fff; border-radius: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); overflow: hidden; transform: translateY(0);
+      transition: transform 0.8s ease, box-shadow 0.8s ease; border: 2px dotted var(--pink-soft); cursor: zoom-in;
+    }
+    .card:hover { transform: translateY(-8px); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+    .card img { width: 100%; display: block; transition: transform 1s ease; }
+    .card:hover img { transform: scale(1.05); }
+    .card p { text-align: center; padding: 10px; color: #555; }
+
+    .about {
+      text-align: center; padding: 60px 20px; background: linear-gradient(to bottom right, #fbfffd, #f4fdf9);
+      border-radius: 12px; max-width: 900px; margin: 0 auto 60px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .about h3 { color: var(--mint); font-size: 1.4rem; margin-bottom: 10px; }
+
+    footer { text-align: center; background: #fff0f5; color: #777; padding: 20px; font-size: 0.8rem; }
+
+    /* --- Lightbox (拡大表示) --- */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
+    .lightbox.open { display: flex; }
+    .lightbox .wrap { position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .lightbox img { max-width: 92vw; max-height: 72vh; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background: #fff; }
+    .lb-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .lb-btn { border: none; background: rgba(255,255,255,0.98); padding: 12px 18px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; font-size: 15px; min-width: 140px; }
+    .lb-btn.primary { background: var(--pink); color: #fff; }
+    .lb-close, .lb-prev, .lb-next { position: absolute; border: none; background: rgba(255,255,255,0.95); width: 44px; height: 44px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; font-size: 22px; display: grid; place-items: center; }
+    .lb-close { top: 20px; right: 20px; }
+    .lb-prev { left: 12px; }
+    .lb-next { right: 12px; }
+    .lb-prev, .lb-next { top: 50%; transform: translateY(-50%); }
+
+    /* --- Interstitial (広告＋カウントダウン) --- */
+    .interstitial { position: fixed; inset: 0; background: rgba(255, 240, 245, 0.9); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1100; }
+    .interstitial.open { display: flex; }
+    .inter-card { background: #fff; border-radius: 16px; max-width: 540px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 20px; text-align: center; border: 2px dotted var(--pink-soft); }
+    .ad-slot { height: 180px; display: grid; place-items: center; margin: 10px 0 16px; background: rgba(255, 182, 193, 0.12); border-radius: 12px; border: 1px dashed rgba(255,182,193,0.5); }
+    .countdown { font-size: 14px; color: #666; margin-bottom: 8px; }
+    .dl-btn { border: none; background: var(--pink); color: #fff; padding: 12px 16px; border-radius: 999px; cursor: not-allowed; opacity: 0.6; min-width: 220px; }
+    .dl-btn.ready { cursor: pointer; opacity: 1; }
+    .terms { font-size: 12px; color: #888; }
+
+    @media (max-width: 600px) {
+      .hero h2 { font-size: 1.4rem; }
+      header h1 { font-size: 1rem; }
+      .lb-prev, .lb-next { width: 40px; height: 40px; }
+      .lb-btn { width: 100%; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ジェーコのゆるゆるイラスト</h1>
+    <nav>
+      <a href="#">ホーム</a>
+      <a href="#gallery">ギャラリー</a>
+      <a href="#about">プロフィール</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>ゆるくてかわいい、毎日がちょっと幸せになるイラスト</h2>
+    <p>無料で使える、ほっこり素材をお届けします♪</p>
+  </section>
+
+  <section id="gallery" class="gallery">
+    <div class="card">
+      <img loading="lazy" src="https://placekitten.com/400/300" data-large="https://placekitten.com/800/600" data-download="https://placekitten.com/1200/900" alt="春のうさぎ">
+      <p>春のうさぎ</p>
+    </div>
+    <div class="card">
+      <img loading="lazy" src="https://placekitten.com/401/300" data-large="https://placekitten.com/802/602" data-download="https://placekitten.com/1202/902" alt="いちごパフェ">
+      <p>いちごパフェ</p>
+    </div>
+    <div class="card">
+      <img loading="lazy" src="https://placekitten.com/402/300" data-large="https://placekitten.com/804/604" data-download="https://placekitten.com/1204/904" alt="雲とひなたぼっこ">
+      <p>雲とひなたぼっこ</p>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <h3>ジェーコについて</h3>
+    <p>こんにちは！イラストレーターのジェーコです。<br>ゆるふわな動物や日常モチーフを中心に描いています。<br>素材として使えるイラストも配布中です🐰✨</p>
+  </section>
+
+  <footer>
+    <p>© 2025 ジェーコのゆるゆるイラスト / All Rights Reserved.</p>
+  </footer>
+
+  <!-- Lightbox markup -->
+  <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="イラスト拡大表示">
+    <button class="lb-close" aria-label="閉じる">×</button>
+    <button class="lb-prev" aria-label="前へ">‹</button>
+    <div class="wrap">
+      <img id="lightboxImage" alt="">
+      <div class="lb-actions">
+        <button id="openDownload" class="lb-btn primary" aria-label="ダウンロード画面を開く">ダウンロード</button>
+        <button id="openInNewTab" class="lb-btn" aria-label="新しいタブで開く（保存用）">新しいタブで開く</button>
+      </div>
+      <div id="saveHint" style="font-size:12px;color:#eee;">iPhoneは「新しいタブで開く」→画像を長押しで保存</div>
+    </div>
+    <button class="lb-next" aria-label="次へ">›</button>
+  </div>
+
+  <!-- Interstitial Download (広告＋カウントダウン) -->
+  <div id="interstitial" class="interstitial" aria-hidden="true" role="dialog" aria-label="ダウンロード準備画面">
+    <div class="inter-card">
+      <h4 style="margin:6px 0 10px;color:#ff6b9b;">ダウンロードの前に広告が表示されます</h4>
+      <div class="ad-slot">
+        <!-- ▼ 広告タグをここに設置（例：Google AdSense）
+        <ins class="adsbygoogle" ...></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        -->
+        <span>広告枠（デモ）</span>
+      </div>
+      <div class="countdown"><span id="cdSec">5</span> 秒後にダウンロード可能になります</div>
+      <button id="doDownload" class="dl-btn" disabled>ダウンロードを開始</button>
+      <p class="terms">ダウンロードを行うことで <a href="#" style="color:var(--mint);">利用規約</a> に同意したものとみなします。</p>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const galleryEl = document.getElementById('gallery');
+      const lightbox = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightboxImage');
+      const btnClose = lightbox.querySelector('.lb-close');
+      const btnPrev = lightbox.querySelector('.lb-prev');
+      const btnNext = lightbox.querySelector('.lb-next');
+      const btnOpenDl = document.getElementById('openDownload');
+      const btnOpenNewTab = document.getElementById('openInNewTab');
+      const saveHint = document.getElementById('saveHint');
+
+      const interstitial = document.getElementById('interstitial');
+      const cdSec = document.getElementById('cdSec');
+      const btnDoDl = document.getElementById('doDownload');
+
+      let cards = Array.from(document.querySelectorAll('#gallery .card img'));
+      let current = 0; let timer = null; let currentDownloadUrl = '';
+      const isiOS = /iP(hone|od|ad)/.test(navigator.userAgent);
+
+      function openLightbox(index){
+        current = index; const img = cards[current]; if(!img) return;
+        lbImg.src = img.dataset.large || img.src; lbImg.alt = img.alt || '';
+        currentDownloadUrl = img.dataset.download || img.dataset.large || img.src;
+        lightbox.classList.add('open'); lightbox.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden'; saveHint.style.display = isiOS ? 'block' : 'none';
+      }
+      function closeLightbox(){ lightbox.classList.remove('open'); lightbox.setAttribute('aria-hidden','true'); document.body.style.overflow = ''; }
+      function show(offset){ current = (current + offset + cards.length) % cards.length; const img = cards[current]; lbImg.src = img.dataset.large || img.src; lbImg.alt = img.alt || ''; currentDownloadUrl = img.dataset.download || img.dataset.large || img.src; }
+
+      // ギャラリーの画像をアクティブ化
+      function activateFromTarget(target){ const idx = cards.indexOf(target); if(idx<0) return; openLightbox(idx); }
+
+      // クリック/タップ/キーボード/ポインタ対応
+      galleryEl.addEventListener('click', (e)=>{ const t = e.target.closest('.card img'); if(t){ e.preventDefault(); activateFromTarget(t); } });
+      galleryEl.addEventListener('touchend', (e)=>{ const t = e.target.closest('.card img'); if(t){ activateFromTarget(t); } }, {passive:true});
+      galleryEl.addEventListener('pointerup', (e)=>{ const t = e.target.closest('.card img'); if(t){ activateFromTarget(t); } });
+      galleryEl.addEventListener('keydown', (e)=>{ const t = e.target.closest('.card img'); if(!t) return; if(e.key==='Enter'||e.key===' '){ e.preventDefault(); activateFromTarget(t); } });
+
+      // Lightbox操作
+      btnClose.addEventListener('click', closeLightbox);
+      btnPrev.addEventListener('click', ()=>show(-1));
+      btnNext.addEventListener('click', ()=>show(1));
+      lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); });
+      document.addEventListener('keydown', (e)=>{ if(!lightbox.classList.contains('open')) return; if(e.key==='Escape') closeLightbox(); if(e.key==='ArrowLeft') show(-1); if(e.key==='ArrowRight') show(1); });
+
+      // スワイプ操作
+      let sx=null, sy=null; lightbox.addEventListener('touchstart',(e)=>{ if(!lightbox.classList.contains('open')) return; const t=e.changedTouches[0]; sx=t.clientX; sy=t.clientY; },{passive:true});
+      lightbox.addEventListener('touchend',(e)=>{ if(sx===null) return; const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)>50 && Math.abs(dy)<40){ if(dx<0) show(1); else show(-1);} sx=sy=null; },{passive:true});
+
+      // ダウンロード導線
+      function openInterstitial(){
+        if(timer) { clearInterval(timer); timer = null; }
+        let sec = 5; cdSec.textContent = sec; btnDoDl.disabled = true; btnDoDl.classList.remove('ready');
+        interstitial.classList.add('open'); interstitial.setAttribute('aria-hidden','false');
+        timer = setInterval(()=>{ sec--; cdSec.textContent = sec; if(sec<=0){ clearInterval(timer); timer = null; btnDoDl.disabled = false; btnDoDl.classList.add('ready'); } },1000);
+      }
+      function closeInterstitial(){ interstitial.classList.remove('open'); interstitial.setAttribute('aria-hidden','true'); }
+      function triggerDownload(){ if(!currentDownloadUrl) return; const a = document.createElement('a'); a.href = currentDownloadUrl; a.setAttribute('download','illustration'); document.body.appendChild(a); a.click(); a.remove(); closeInterstitial(); }
+
+      document.getElementById('openDownload').addEventListener('click', openInterstitial);
+      document.getElementById('doDownload').addEventListener('click', ()=>{ if(!btnDoDl.disabled) triggerDownload(); });
+      btnOpenNewTab.addEventListener('click', ()=>{ if(!currentDownloadUrl) return; window.open(currentDownloadUrl, '_blank'); });
+    })();
+  </script>
+</body>
+</html>
